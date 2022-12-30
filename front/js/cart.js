@@ -11,3 +11,7 @@ function recoverItemsFromLS() {
         cart.push(itemObject);
     }
 }
+
+function displayItemsOnCart() {
+    
+}
