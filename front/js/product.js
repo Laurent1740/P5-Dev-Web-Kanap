@@ -86,6 +86,7 @@ function saveData(color, quantity) {
         imageUrl : imgUrl,
         altTxt : altText
     }
+    // stingify = j'en fais une string.
     localStorage.setItem(id, JSON.stringify(data));
 }
 
@@ -104,8 +105,7 @@ function redirectToCart(){
 main();
 document.addEventListener('click', function(event){
     if(event.target.id === "addToCart"){
-        addToCart();
-        // alert("ajouté au panier !");
+        addToCart();S
     }
 
 })
