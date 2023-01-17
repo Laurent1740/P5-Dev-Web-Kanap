@@ -1,3 +1,5 @@
+var product;
+
 async function main(){
     fetchData();
 }
@@ -18,6 +20,7 @@ function fetchData(){
         }
     })
     .then(function(datas){
+        product = datas
         displayProduct(datas);
         
     })
@@ -52,9 +55,9 @@ function displayColorValue(colors){
     });
 }
 function addToCart(){
-    console.log("j'ajoute au panier");
     const color = document.querySelector("#colors").value;
     const quantity = document.querySelector("#quantity").value;
+    
     
     if (isOrderUnexist(color, quantity)) return;
     saveData(color, quantity);
@@ -73,39 +76,59 @@ function isOrderUnexist(color, quantity){
 // verifier s'il existe un panier existant 
 // si c'est pas le cas on le créé
 function saveData(color, quantity) { 
-    const id = fetchIdFromUrl();
-    if(id!= null){
-        let itemPrice = 0;
-        let imgUrl, altText
+
+    // vérifier  l'existante du panier
+    let cart = [];
+    if(localStorage.getItem("cart")){
+        cart = JSON.parse(localStorage.getItem("cart"))
     }
-    const data = {
+
+    console.log(cart);
+    const id = fetchIdFromUrl();    
+    const itemToAdd = {
         id : id,
         color : color,
         quantity : quantity,
-        price : itemPrice,
-        imageUrl : imgUrl,
-        altTxt : altText
+        name : product.name
     }
-    // stingify = j'en fais une string.
-    localStorage.setItem(id, JSON.stringify(data));
+
+    // parcourir le tableau cart (ou trouver une autre méthode)
+    // pour vérifier que ni l'id ni la déclinaison ne se trouve deja dedans
+    //
+    
+    if (cart.length === 0) {
+        // je push le produit
+        cart.push(itemToAdd);
+    } else {
+    
+        cart.forEach((cartItem)=> {
+            if(id === cartItem.id && color === cartItem.color ){
+                console.log('update')
+                // on update les quantités
+                cartItem.quantity = parseInt(cartItem.quantity) + parseInt(quantity)
+            } else {
+                console.log('add')
+                // sinon on rajoute le produit
+                console.log("je rajoute un produit")
+                cart.push(itemToAdd);
+            }
+        })
+    }
+
+    console.log('cart', cart)
+    localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// rajouter le produit et quantité dans ce panier.
-// stocker ce panier dans un endroit approprié pour le récuperer ensuite.
-
-// SI le panier existe déja, on vérifie que le produit et couleur sont déja a l'interieur
-// si c'est le cas, mettre la quantité à jour.
-// sinon ajouter.
 
 // quand tout est ok, on redirige vers la page caddie.
 function redirectToCart(){
-    window.location.href = "cart.html";
+    // window.location.href = "cart.html";
 }
 
 main();
 document.addEventListener('click', function(event){
     if(event.target.id === "addToCart"){
-        addToCart();S
+        addToCart();
     }
 
 })
