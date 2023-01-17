@@ -13,7 +13,7 @@ function fetchData(){
             displayAllData(datas);
         })
 }
-// affichage, dans les cards HTML, des diiférentes 
+// affichage, dans les cards HTML, des différentes 
 // infos du tableau récupéré juste au dessus.
 function displayAllData(products){
     let itemsHtml = document.getElementById("items");
