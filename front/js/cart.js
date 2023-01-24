@@ -34,7 +34,6 @@ function filterDatas(dataFromApi){
 }
 
 function calculTotalPrice(cart){
-  // console.log('cart', cart)
   let totalPrice = 0;
   let totalItems = 0;
   cart.forEach((cartItem) => {
@@ -47,30 +46,31 @@ function calculTotalPrice(cart){
   totalPriceHtml.innerHTML = totalPrice;
 }
 
-function addEventsHandler(){
-  let itemsFromStorage = JSON.parse(localStorage.getItem("cart"));
+function addEventsHandler(filteredCart){
+  let itemsFromFC = JSON.parse(localStorage.getItem("cart"));
   let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];
   deleteItemContainer.forEach((item, index) => {
     item.addEventListener('click', function(event){
       let itemToRemove = deleteItemContainer[index].closest('.cart__item');
       // je recupere l'id contenu dans le data-id du HTML
-      let itemId = itemToRemove.dataset.id;
-      // Je selectionne l'index du tableau dans le lacalStorage en fonction de l'id du produit
-      let indexStorage = itemsFromStorage.findIndex(function(element) {
+      const itemId = itemToRemove.dataset.id;
+      // Je selectionne l'index du tableau dans le filteredCart en fonction de l'id du produit
+      let indexFC = itemsFromFC.findIndex(function(element) {
         return element.id === itemId;
       });
-      // Je le supprime du tableau et met a jour mon lacalstorage
-      itemsFromStorage.splice(indexStorage, 1);
-      localStorage.setItem("cart", JSON.stringify(itemsFromStorage));
+      // Je le supprime du tableau et met a jour mon localstorage
+      itemsFromFC.splice(indexFC, 1);
+      localStorage.setItem("cart", JSON.stringify(itemsFromFC));
       // Je supprime l'élément correspondant du html.
       itemToRemove.parentNode.removeChild(itemToRemove);
+      // totalItems.push(itemsFromFC);
+      
     });
   });
 }
 
 function displayAllData(products){
   let cartContainer = document.getElementById("cart__items")
-  
   products.forEach((product) => {
     let productElement = document.createElement('article')
     productElement.innerHTML = `
