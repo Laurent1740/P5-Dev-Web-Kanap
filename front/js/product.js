@@ -21,8 +21,7 @@ function fetchData(){
     })
     .then(function(datas){
         product = datas
-        displayProduct(datas);
-        
+        displayProduct(datas);        
     })
 }
 // Je remplis les différente balise présente dans la page product.html
@@ -44,10 +43,8 @@ function displayProduct(sofa){
 }
 // je remplis les options des différentes couleurs
 function displayColorValue(colors){
-    let colorProduct = document.getElementById("colors");
-    
-    colors.forEach((color) => {
-        
+    let colorProduct = document.getElementById("colors");   
+    colors.forEach((color) => {      
         const productColor = document.createElement("option");
         productColor.value = color;
         productColor.textContent = color;
@@ -57,8 +54,6 @@ function displayColorValue(colors){
 function addToCart(){
     const color = document.querySelector("#colors").value;
     const quantity = document.querySelector("#quantity").value;
-    
-    
     if (isOrderUnexist(color, quantity)) return;
     saveData(color, quantity);
     redirectToCart();
@@ -76,13 +71,11 @@ function isOrderUnexist(color, quantity){
 // verifier s'il existe un panier existant 
 // si c'est pas le cas on le créé
 function saveData(color, quantity) { 
-
     // vérifier  l'existante du panier
     let cart = [];
     if(localStorage.getItem("cart")){
         cart = JSON.parse(localStorage.getItem("cart"))
     }
-
     console.log(cart);
     const id = fetchIdFromUrl();    
     const itemToAdd = {
@@ -91,11 +84,8 @@ function saveData(color, quantity) {
         quantity : quantity,
         name : product.name
     }
-
     // parcourir le tableau cart (ou trouver une autre méthode)
     // pour vérifier que ni l'id ni la déclinaison ne se trouve deja dedans
-    //
-    
     if (cart.length === 0) {
         // je push le produit
         cart.push(itemToAdd);
@@ -103,22 +93,17 @@ function saveData(color, quantity) {
     
         cart.forEach((cartItem)=> {
             if(id === cartItem.id && color === cartItem.color ){
-                console.log('update')
                 // on update les quantités
                 cartItem.quantity = parseInt(cartItem.quantity) + parseInt(quantity)
             } else {
-                console.log('add')
                 // sinon on rajoute le produit
-                console.log("je rajoute un produit")
                 cart.push(itemToAdd);
             }
         })
     }
-
     console.log('cart', cart)
     localStorage.setItem("cart", JSON.stringify(cart));
 }
-
 
 // quand tout est ok, on redirige vers la page caddie.
 function redirectToCart(){
@@ -130,5 +115,4 @@ document.addEventListener('click', function(event){
     if(event.target.id === "addToCart"){
         addToCart();
     }
-
 })

@@ -1,4 +1,3 @@
-// je récupère les données stockées dans le localstorage, puis je les repasse en tant qu'objet. (.parse)
 async function main(){
     fetchData();
  }
@@ -15,11 +14,10 @@ function fetchData(){
       })
 }
 
+// récupérer les données du localstorage puis je filtre mon tableau en fonction des Id
 function filterDatas(dataFromApi){
-  // récupérer les données du localstorage
   let filteredCart = []
   let itemsFromStorage = JSON.parse(localStorage.getItem("cart"));
- 
 
   dataFromApi.forEach((itemApi)=> {
     itemsFromStorage.forEach((itemStorage)=> {
@@ -32,10 +30,43 @@ function filterDatas(dataFromApi){
       }
     })
   })
-  
   displayAllData(filteredCart);
 }
 
+function calculTotalPrice(cart){
+  // console.log('cart', cart)
+  let totalPrice = 0;
+  let totalItems = 0;
+  cart.forEach((cartItem) => {
+    totalPrice += (parseFloat(cartItem.item.price) * parseInt(cartItem.SelectedQuantity));
+    totalItems += parseInt(cartItem.SelectedQuantity);
+  });
+  const totalItemsHtml = document.getElementById('totalQuantity');
+  totalItemsHtml.innerHTML = totalItems;
+  const totalPriceHtml = document.getElementById('totalPrice');
+  totalPriceHtml.innerHTML = totalPrice;
+}
+
+function addEventsHandler(){
+  let itemsFromStorage = JSON.parse(localStorage.getItem("cart"));
+  let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];
+  deleteItemContainer.forEach((item, index) => {
+    item.addEventListener('click', function(event){
+      let itemToRemove = deleteItemContainer[index].closest('.cart__item');
+      // je recupere l'id contenu dans le data-id du HTML
+      let itemId = itemToRemove.dataset.id;
+      // Je selectionne l'index du tableau dans le lacalStorage en fonction de l'id du produit
+      let indexStorage = itemsFromStorage.findIndex(function(element) {
+        return element.id === itemId;
+      });
+      // Je le supprime du tableau et met a jour mon lacalstorage
+      itemsFromStorage.splice(indexStorage, 1);
+      localStorage.setItem("cart", JSON.stringify(itemsFromStorage));
+      // Je supprime l'élément correspondant du html.
+      itemToRemove.parentNode.removeChild(itemToRemove);
+    });
+  });
+}
 
 function displayAllData(products){
   let cartContainer = document.getElementById("cart__items")
@@ -55,8 +86,8 @@ function displayAllData(products){
                 </div>
                 <div class="cart__item__content__settings">
                 <div class="cart__item__content__settings__quantity">
-                    <p>Qté : </p>
-                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.SelectedQuantity}">
+                    <p>Qté : ${product.SelectedQuantity} </p>
+                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="0">
                 </div>
                 <div class="cart__item__content__settings__delete">
                     <p class="deleteItem">Supprimer</p>
@@ -65,15 +96,9 @@ function displayAllData(products){
             </div>
         </article>
     `
-    cartContainer.appendChild(productElement)
-    
+    cartContainer.appendChild(productElement);
   })
+  calculTotalPrice(products);
+  addEventsHandler(products);
 }
 main();
-document.addEventListener('click', function(event){
-  if(event.target.class === "deleteItem"){
-      deleteItemFromStorage();
-    }
-    console.log(event)
-
-})
