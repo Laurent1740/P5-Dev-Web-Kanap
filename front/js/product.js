@@ -56,7 +56,7 @@ function addToCart(){
     const quantity = document.querySelector("#quantity").value;
     if (isOrderUnexist(color, quantity)) return;
     saveData(color, quantity);
-    redirectToCart();
+    
 }
 // verifier la quantité n'est pas a vide
 // verifier que la couleur ne soit pas a vide
@@ -91,23 +91,24 @@ function saveData(color, quantity) {
         cart.push(itemToAdd);
     } else {
     
+        let isInCart = false;
         cart.forEach((cartItem)=> {
             if(id === cartItem.id && color === cartItem.color ){
                 // on update les quantités
                 cartItem.quantity = parseInt(cartItem.quantity) + parseInt(quantity)
-            } else {
-                // sinon on rajoute le produit
-                cart.push(itemToAdd);
-            }
+                isInCart = true;
+            } 
         })
+        if (!isInCart) cart.push(itemToAdd);
     }
     console.log('cart', cart)
     localStorage.setItem("cart", JSON.stringify(cart));
+    redirectToCart();
 }
 
 // quand tout est ok, on redirige vers la page caddie.
 function redirectToCart(){
-    // window.location.href = "cart.html";
+    window.location.href = "cart.html";
 }
 
 main();

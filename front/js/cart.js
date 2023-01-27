@@ -34,6 +34,7 @@ function filterDatas(dataFromApi){
 }
 
 function calculTotalPrice(cart){
+  console.log('cart', cart)
   let totalPrice = 0;
   let totalItems = 0;
   cart.forEach((cartItem) => {
@@ -47,7 +48,7 @@ function calculTotalPrice(cart){
 }
 
 function addEventsHandler(filteredCart){
-  let itemsFromFC = JSON.parse(localStorage.getItem("cart"));
+  //let filteredCart = JSON.parse(localStorage.getItem("cart"));
   let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];
   deleteItemContainer.forEach((item, index) => {
     item.addEventListener('click', function(event){
@@ -55,20 +56,50 @@ function addEventsHandler(filteredCart){
       // je recupere l'id contenu dans le data-id du HTML
       const itemId = itemToRemove.dataset.id;
       // Je selectionne l'index du tableau dans le filteredCart en fonction de l'id du produit
-      let indexFC = itemsFromFC.findIndex(function(element) {
-        return element.id === itemId;
+      console.log('itemId', itemId)
+      let indexFC = filteredCart.findIndex(function(element) {
+        return element.item._id === itemId;
       });
+      console.log('indexFC', indexFC)
       // Je le supprime du tableau et met a jour mon localstorage
-      itemsFromFC.splice(indexFC, 1);
-      localStorage.setItem("cart", JSON.stringify(itemsFromFC));
+      filteredCart.splice(indexFC, 1);
+      console.log('new cart', filteredCart)
+
+      const localStorageArray = []
+      filteredCart.forEach((product)=>{
+        let item = {};
+        item.id = product.item._id;
+        item.color = product.SelectColor;
+        item.quantity = product.SelectedQuantity;
+        item.name = product.item.name;
+        localStorageArray.push(item)
+      })      
+
+      localStorage.setItem("cart", JSON.stringify(localStorageArray));
       // Je supprime l'élément correspondant du html.
       itemToRemove.parentNode.removeChild(itemToRemove);
-      // totalItems.push(itemsFromFC);
-      
+      // totalItems.push(filteredCart);
+      calculTotalPrice(filteredCart)
     });
   });
 }
+function changeQuantity(){
+  const input = document.querySelector('.itemQuantity');
+  input.addEventListener('change', function(event){
+  // vérification de la validité de la valeur saisie
+  const quantity = event.target.value;
+  if(quantity < input.min || quantity > input.max){
+    // affichage d'un message d'erreur
+    alert("La quantité doit être comprise entre " + input.min + " et " + input.max);
+    // remise à la valeur précédente
+    event.target.value = event.target.defaultValue;
+  } else {
+    // mise à jour de la quantité
+    // ...
 
+  }
+});
+}
 function displayAllData(products){
   let cartContainer = document.getElementById("cart__items")
   products.forEach((product) => {
@@ -86,8 +117,8 @@ function displayAllData(products){
                 </div>
                 <div class="cart__item__content__settings">
                 <div class="cart__item__content__settings__quantity">
-                    <p>Qté : ${product.SelectedQuantity} </p>
-                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="0">
+                    <p>Qté :</p>
+                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.SelectedQuantity}">
                 </div>
                 <div class="cart__item__content__settings__delete">
                     <p class="deleteItem">Supprimer</p>
