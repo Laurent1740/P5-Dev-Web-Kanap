@@ -249,39 +249,35 @@ function checkUserData(){
  
     // je récupère le cart de mon localstorage et je le stock dans une variable "cart"
     let cart = JSON.parse(localStorage.getItem("cart"));
-    // let orderDetails = {};
-    // orderDetails.contact = {
-    //     firstName: valueFirstName,
-    //     lastName : valueLastName,
-    //     address : valueAddress,
-    //     city : valueCity,
-    //     email : valueMail,
-    //   }
-
-    // orderDetails.products = [...cart.map(product => product.id)]
-    // console.log('orderDetails',orderDetails)
-
-    fetch('http://localhost:3000/api/products/order', {
-      mode: 'no-cors',
-      headers: {
-         'Accept': 'application/json',
-         'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify({ contact :{
+    let contact = {
         firstName: valueFirstName,
         lastName : valueLastName,
         address : valueAddress,
         city : valueCity,
         email : valueMail,
+      }
+    let products = [...cart.map(product => product.id)]
+
+    fetch('http://localhost:3000/api/products/order', {
+      method: 'POST',
+      // mode: 'no-cors',
+      headers: {
+         'Accept': 'application/json',
+         'Content-Type': 'application/json'
       },
-      products : [...cart.map(product => product.id)]
-    })
+      body: JSON.stringify({ contact, products })
    })
    .then(response => response.json())
    .then(order => {
     console.log('order', order)
-      // traitement
+     // tu as la réponse de l'API dans l'objet order
+     // celui-ci contient plusieurs infos dont l'orderId
+     // tu dois créer une string de redirection de la page retour... 
+     // ...(cf spec technique) en concaténant avec l'orderId renvoyé par l'API (afin d'avoir l'orderId dans l'url quand la redirection sera faite)
+     // tu dois utiliser cette string pour faire la redirection vers la page de confirmation
+     // sur la page de confirmation récupérer l'orderId dans l'url (comme tu avais fait pour l'id sur la page détail produit)
+     // faire afficher cette orderID sur la page de confirmation
+     // ET ENSUITE C'EST FINI !!
    })
    .catch(error => console.log(error));
 
