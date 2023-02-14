@@ -278,25 +278,19 @@ function checkUserData(){
      // sur la page de confirmation récupérer l'orderId dans l'url (comme tu avais fait pour l'id sur la page détail produit)
      // faire afficher cette orderID sur la page de confirmation
      // ET ENSUITE C'EST FINI !!
+     window.location.href = "confirmation.html?orderId=" + order.orderId;
+
    })
    .catch(error => console.log(error));
-
-
-    //saveUsersInAPI.push(userDatas);
-    
-    // envoyer mon objet JSON a l'API
-    
-    // récupérer la réponse de l'API
-    
-    // rediriger l'urilisateur vers la page de confirmation 
-    // en mettant dans l'url l'id de la commande renvoyé par l'API
-  }
-  
+  } 
 }
 main();
 document.addEventListener('click', function(event){
   if(event.target.id === "order"){
     event.preventDefault()
     checkUserData();
+    // Utilisez orderId pour construire votre URL de redirection
+  
+    
   }
 })
