@@ -18,19 +18,20 @@ function fetchData(){
 function filterDatas(dataFromApi){
   let filteredCart = []
   let itemsFromStorage = JSON.parse(localStorage.getItem("cart"));
-
-  dataFromApi.forEach((itemApi)=> {
-    itemsFromStorage.forEach((itemStorage)=> {
-      if(itemApi._id == itemStorage.id){
-        let finalItem = {};
-        finalItem.item = itemApi;
-        finalItem.SelectedQuantity = parseInt(itemStorage.quantity);
-        finalItem.SelectColor = itemStorage.color;
-        filteredCart.push(finalItem);
-      }
+  if(itemsFromStorage){
+    dataFromApi.forEach((itemApi)=> {
+      itemsFromStorage.forEach((itemStorage)=> {
+        if(itemApi._id == itemStorage.id){
+          let finalItem = {};
+          finalItem.item = itemApi;
+          finalItem.SelectedQuantity = parseInt(itemStorage.quantity);
+          finalItem.SelectColor = itemStorage.color;
+          filteredCart.push(finalItem);
+        }
+      })
     })
-  })
-  displayAllData(filteredCart);
+    displayAllData(filteredCart);
+  }
 }
 
 function calculTotalPrice(cart){
@@ -174,6 +175,7 @@ function checkUserData(){
   const errorMailHTML = document.getElementById('emailErrorMsg');
 
   const checkTypeMail 	= /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i
+  const checkTypeletter = /^[a-zA-Z]+$/
 
   let isValid = true;
   let errorTypeFirstName = '';
@@ -275,10 +277,8 @@ function checkUserData(){
      // tu dois créer une string de redirection de la page retour... 
      // ...(cf spec technique) en concaténant avec l'orderId renvoyé par l'API (afin d'avoir l'orderId dans l'url quand la redirection sera faite)
      // tu dois utiliser cette string pour faire la redirection vers la page de confirmation
-     // sur la page de confirmation récupérer l'orderId dans l'url (comme tu avais fait pour l'id sur la page détail produit)
-     // faire afficher cette orderID sur la page de confirmation
-     // ET ENSUITE C'EST FINI !!
-     window.location.href = "confirmation.html?orderId=" + order.orderId;
+     localStorage.removeItem('cart');
+     window.location.href = "confirmation.html?orderid=" + order.orderId;
 
    })
    .catch(error => console.log(error));
@@ -288,7 +288,12 @@ main();
 document.addEventListener('click', function(event){
   if(event.target.id === "order"){
     event.preventDefault()
-    checkUserData();
+    let cart = JSON.parse(localStorage.getItem("cart"))
+    if(!cart){
+      alert("Votre panier est vide !")
+    }else {
+      checkUserData();
+    }
     // Utilisez orderId pour construire votre URL de redirection
   
     
